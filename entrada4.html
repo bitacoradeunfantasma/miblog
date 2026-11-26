@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La web se volvió un centro comercial | Bitácora de un fantasma</title>
+<meta name="description" content="RSS, dominios propios y otras formas de recuperar una web más personal.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--g:#39ff14;--d:#1f8f10;--t:rgba(57,255,20,.28);--m:'Share Tech Mono','Courier New',monospace}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#000;color:var(--g);font:16px/1.7 var(--m);letter-spacing:.4px;text-shadow:0 0 2px rgba(57,255,20,.35);overflow-x:hidden}#matrix{position:fixed;inset:0;z-index:0;opacity:.08;pointer-events:none}.crt{position:fixed;inset:0;z-index:900;pointer-events:none}.crt:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(0,0,0,.45) 3px,rgba(0,0,0,.45) 4px)}.crt:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%)}.wrap{position:relative;z-index:10;width:min(860px,92vw);margin:auto}.status{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 22px;padding:8px 4vw;border-bottom:1px solid var(--t);background:rgba(0,0,0,.88);color:var(--d);font-size:.72rem;text-transform:uppercase;text-shadow:none}.status b{color:var(--g);font-weight:400}.led{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:blink 1.6s infinite}@keyframes blink{50%{opacity:.15}}header{padding:42px 0 24px;border-bottom:1px dashed var(--t)}.prompt{color:var(--d);font-size:.85rem}.prompt b{color:var(--g);font-weight:400}.back{display:inline-block;margin:18px 0 24px;color:var(--g);font-size:.78rem;text-decoration:none;text-transform:uppercase;border-bottom:1px solid var(--d)}.tag{color:var(--d);font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase}h1{max-width:22ch;margin:10px 0;font-size:clamp(2rem,7vw,3.8rem);font-weight:400;line-height:1.08;text-transform:uppercase;text-shadow:0 0 4px rgba(57,255,20,.75),0 0 14px rgba(57,255,20,.28)}.intro{color:var(--d)}.meta{display:flex;flex-wrap:wrap;gap:10px 18px;color:var(--d);font-size:.7rem;text-transform:uppercase;letter-spacing:1px}nav{display:flex;flex-wrap:wrap;gap:10px;padding:16px 0;border-bottom:1px solid var(--t)}nav a{padding:6px 12px;border:1px solid var(--t);color:var(--g);font-size:.8rem;text-decoration:none;text-transform:uppercase}nav a:hover{background:var(--g);color:#000}main{padding:34px 0 58px}.note{padding:14px 16px;border-left:3px solid var(--g);background:rgba(57,255,20,.045);color:var(--d)}.note strong{color:var(--g);font-weight:400}main h2{margin:38px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--t);font-size:1.25rem;font-weight:400;letter-spacing:1px;text-transform:uppercase}main p,main li{color:#9fca98;font-size:.95rem}main ul{padding-left:24px}main li{margin:7px 0}main code{padding:2px 6px;border:1px solid var(--t);background:rgba(57,255,20,.06);color:var(--g)}.closing{margin-top:38px;padding-top:20px;border-top:1px dashed var(--t);color:var(--d)!important}footer{padding:24px 0 42px;border-top:1px dashed var(--t);color:var(--d);font-size:.76rem}footer a{color:var(--g);text-decoration:none}#toggle-matrix{position:fixed;right:16px;bottom:16px;z-index:950;padding:8px 12px;border:1px solid var(--t);background:#000;color:var(--g);font: .68rem var(--m);text-transform:uppercase;cursor:pointer}@media(max-width:600px){.status{font-size:.62rem}main p,main li{font-size:.9rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas><div class="crt" aria-hidden="true"></div>
+<div class="status"><span><span class="led"></span>ESTADO: <b>EN LÍNEA</b></span><span>NODO: <b>127.0.0.1</b></span><span>REL: <b id="reloj">--:--:--</b></span></div>
+<div class="wrap">
+<header>
+<p class="prompt">root@localhost:<b>~/posts</b>$ cat web-centro-comercial.md</p><a class="back" href="index.html">&lt; volver_a_entradas</a>
+<p class="tag">// privacidad · internet</p><h1>La web se volvió un centro comercial</h1>
+<p class="intro">RSS, dominios propios y correo sin depender de una sola plataforma: pequeñas maneras de recuperar una red más personal.</p>
+<div class="meta"><span>2026-10-30</span><span>6 min de lectura</span><span>por 0xBLOG</span></div>
+</header>
+<nav><a href="index.html">/inicio</a><a href="index.html#posts">/archivo</a><a href="index.html#contacto">/contacto</a></nav>
+<main>
+<aside class="note"><strong>[contexto]</strong> No existe una configuración única que garantice privacidad total. Estas ideas ayudan a elegir herramientas con más control y menos dependencia.</aside>
+<p>La web todavía tiene rincones tranquilos, pero muchos espacios que antes eran páginas sencillas ahora viven dentro de plataformas cerradas. El contenido puede ser útil; el problema aparece cuando perdemos la posibilidad de encontrarlo, conservarlo o moverlo.</p>
+<h2>Volver a suscribirse con RSS</h2>
+<p>Con un lector RSS puedes seguir sitios sin depender de que un algoritmo decida qué mostrarte. Cuando un sitio ofrece un feed, añádelo a tu lector y revisa las publicaciones en el orden que prefieras.</p>
+<p>RSS no elimina la publicidad ni convierte automáticamente un sitio en privado, pero te devuelve una forma sencilla de elegir qué lees.</p>
+<h2>Publicar en un dominio propio</h2>
+<p>Un dominio propio le da continuidad a tu espacio en línea. Puedes cambiar el servidor o la herramienta de publicación sin tener que cambiar la dirección que compartes, siempre que mantengas el dominio.</p>
+<p>También requiere responsabilidad: renovar el dominio, proteger la cuenta del registrador y conservar copias de los archivos.</p>
+<h2>Elegir el correo con cuidado</h2>
+<p>El correo electrónico sigue siendo una pieza importante para recuperar cuentas y comunicarse. Revisa las opciones de seguridad de tu proveedor, usa una contraseña única y activa autenticación multifactor si está disponible.</p>
+<h2>Guardar una copia de lo que te importa</h2>
+<p>No asumas que una página o publicación estará disponible para siempre. Guarda documentos que necesites, respalda tus propios textos y conserva exportaciones de servicios que uses con frecuencia.</p>
+<h2>Pequeños cambios posibles</h2>
+<ul><li>Usa un lector RSS para seguir publicaciones.</li><li>Guarda marcadores en un formato exportable.</li><li>Activa autenticación multifactor en cuentas importantes.</li><li>Revisa permisos de aplicaciones conectadas a tus cuentas.</li><li>Haz copias de seguridad de tus propios archivos.</li></ul>
+<h2>No hace falta desaparecer</h2>
+<p>Recuperar control no significa borrar todas tus cuentas ni abandonar internet. Puede ser algo tan modesto como leer desde un feed, tener una copia local de tus textos o elegir conscientemente dónde publicas.</p>
+<p class="closing">La red que queremos no aparece por accidente: se construye con herramientas pequeñas, abiertas y suficientemente nuestras.</p>
+</main>
+<footer><p><a href="index.html">&lt; volver a la bitácora</a> · Sin rastreo, sin cookies.</p><p>© 2026 A GHOST ·</p></footer>
+</div>
+<button id="toggle-matrix" aria-pressed="true">matrix: on</button>
+<script>
+(function(){"use strict";var r=matchMedia("(prefers-reduced-motion: reduce)").matches,c=document.getElementById("matrix"),x=c.getContext("2d"),f=16,n=0,g=[],on=!r,t=null,a="01ｱｲｳｴｵｶｷｸ<>/\\{}[]$#@%&*+=-_.:;|".split("");function size(){c.width=innerWidth;c.height=innerHeight;n=Math.floor(c.width/f);g=new Array(n).fill(0).map(function(){return Math.random()*-80})}function draw(){if(!on)return;x.fillStyle="rgba(0,0,0,.09)";x.fillRect(0,0,c.width,c.height);x.font=f+"px monospace";for(var i=0;i<n;i++){var y=g[i]*f;x.fillStyle=Math.random()>.97?"#b6ffab":"#39ff14";x.fillText(a[Math.floor(Math.random()*a.length)],i*f,y);if(y>c.height&&Math.random()>.975)g[i]=0;g[i]++}}size();addEventListener("resize",size);if(!r)t=setInterval(draw,62);document.getElementById("toggle-matrix").onclick=function(e){on=!on;e.currentTarget.textContent="matrix: "+(on?"on":"off");e.currentTarget.setAttribute("aria-pressed",String(on));if(on){x.clearRect(0,0,c.width,c.height);if(!t)t=setInterval(draw,62)}else if(t){clearInterval(t);t=null}};function clock(){var d=new Date();document.getElementById("reloj").textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(v){return String(v).padStart(2,"0")}).join(":")}clock();setInterval(clock,1000)})();
+</script>
+</body>
+</html>

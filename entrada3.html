@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scripts de shell que no deberías escribir | Bitácora de un fantasma</title>
+<meta name="description" content="Errores comunes al escribir scripts de shell y algunas formas de evitarlos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#39ff14;--dim:#1f8f10;--tenue:rgba(57,255,20,.28);--mono:'Share Tech Mono','Courier New',monospace}
+*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:#000;color:var(--verde);font:16px/1.7 var(--mono);letter-spacing:.4px;text-shadow:0 0 2px rgba(57,255,20,.35);overflow-x:hidden}
+#matrix{position:fixed;inset:0;z-index:0;opacity:.08;pointer-events:none}.crt{position:fixed;inset:0;z-index:900;pointer-events:none}.crt:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(0,0,0,.45) 3px,rgba(0,0,0,.45) 4px)}.crt:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%)}
+.wrap{position:relative;z-index:10;width:min(860px,92vw);margin:auto}.status{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 22px;padding:8px 4vw;border-bottom:1px solid var(--tenue);background:rgba(0,0,0,.88);color:var(--dim);font-size:.72rem;text-transform:uppercase;text-shadow:none}.status b{color:var(--verde);font-weight:400}.led{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--verde);box-shadow:0 0 8px var(--verde);animation:blink 1.6s infinite}@keyframes blink{50%{opacity:.15}}
+header{padding:42px 0 24px;border-bottom:1px dashed var(--tenue)}.prompt{color:var(--dim);font-size:.85rem;text-shadow:none}.prompt b{color:var(--verde);font-weight:400}.back{display:inline-block;margin:18px 0 24px;color:var(--verde);font-size:.78rem;text-decoration:none;text-transform:uppercase;border-bottom:1px solid var(--dim)}.tag{color:var(--dim);font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase}.tag,h1,.meta{margin-top:10px}h1{max-width:22ch;margin-bottom:0;font-size:clamp(2rem,7vw,3.8rem);font-weight:400;line-height:1.08;text-transform:uppercase;text-shadow:0 0 4px rgba(57,255,20,.75),0 0 14px rgba(57,255,20,.28)}.intro{color:var(--dim)}.meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:1px}
+nav{display:flex;gap:10px;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--tenue)}nav a{padding:6px 12px;border:1px solid var(--tenue);color:var(--verde);font-size:.8rem;text-decoration:none;text-transform:uppercase}nav a:hover{background:var(--verde);color:#000}
+main{padding:34px 0 58px}.note{padding:14px 16px;border-left:3px solid var(--verde);background:rgba(57,255,20,.045);color:var(--dim)}.note strong{color:var(--verde);font-weight:400}
+main h2{margin:38px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--tenue);font-size:1.25rem;font-weight:400;text-transform:uppercase;letter-spacing:1px}main p,main li{color:#9fca98;font-size:.95rem}main ul{padding-left:24px}main li{margin:7px 0}code,pre{font-family:var(--mono)}code{padding:2px 6px;border:1px solid var(--tenue);background:rgba(57,255,20,.06);color:var(--verde)}pre{overflow-x:auto;padding:16px;border:1px solid var(--tenue);background:rgba(57,255,20,.035);color:var(--verde);font-size:.84rem;text-shadow:none}.closing{margin-top:38px;padding-top:20px;border-top:1px dashed var(--tenue);color:var(--dim)!important}
+footer{padding:24px 0 42px;border-top:1px dashed var(--tenue);color:var(--dim);font-size:.76rem}footer a{color:var(--verde);text-decoration:none}
+#toggle-matrix{position:fixed;right:16px;bottom:16px;z-index:950;padding:8px 12px;border:1px solid var(--tenue);background:#000;color:var(--verde);font: .68rem var(--mono);text-transform:uppercase;cursor:pointer}
+@media(max-width:600px){.status{font-size:.62rem}main p,main li{font-size:.9rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas><div class="crt" aria-hidden="true"></div>
+<div class="status"><span><span class="led"></span>ESTADO: <b>EN LÍNEA</b></span><span>NODO: <b>127.0.0.1</b></span><span>REL: <b id="reloj">--:--:--</b></span></div>
+<div class="wrap">
+<header>
+<p class="prompt">root@localhost:<b>~/posts</b>$ cat scripts-shell.md</p>
+<a class="back" href="index.html">&lt; volver_a_entradas</a>
+<p class="tag">// código · shell · bash</p>
+<h1>Scripts de shell que no deberías escribir (pero escribirás)</h1>
+<p class="intro">Un homenaje a los one-liners que funcionan una sola vez, en una sola máquina y bajo una sola fase lunar.</p>
+<div class="meta"><span>2026-11-08</span><span>9 min de lectura</span><span>por 0xBLOG</span></div>
+</header>
+<nav><a href="index.html">/inicio</a><a href="index.html#posts">/archivo</a><a href="index.html#contacto">/contacto</a></nav>
+
+<main>
+<aside class="note"><strong>[advertencia]</strong> Los ejemplos son didácticos. Pruébalos con datos temporales y entiende cada comando antes de ejecutarlo.</aside>
+<p>El shell permite resolver tareas en segundos. También permite borrar en segundos algo que llevaba años guardado. La diferencia entre una automatización útil y un accidente suele ser una validación, una comilla o una ruta escrita correctamente.</p>
+
+<h2>El clásico: variables sin comillas</h2>
+<p>Si una ruta contiene espacios, una variable sin comillas puede convertirse en varios argumentos. Cita las expansiones cuando representen rutas o valores que deban tratarse como una sola pieza.</p>
+<pre><code>archivo="mi carpeta/notas.txt"
+cat "$archivo"</code></pre>
+<p>Las comillas no arreglan todos los problemas, pero evitan muchas divisiones y expansiones inesperadas.</p>
+
+<h2>Usar <code>rm -rf</code> sin comprobar la ruta</h2>
+<p>Los comandos destructivos merecen una pausa. Antes de eliminar algo desde un script, valida que la variable tenga valor y que la ruta esté dentro del directorio esperado. Para pruebas, imprime primero lo que el script haría.</p>
+<pre><code>printf 'Se procesaría: %s\n' "$directorio"</code></pre>
+
+<h2>Ignorar los errores</h2>
+<p>Un script que sigue adelante después de una operación fallida puede producir resultados engañosos. En Bash, <code>set -euo pipefail</code> puede ayudar a detectar algunos errores, pero no sustituye la revisión: su comportamiento tiene excepciones y hay que entenderlo.</p>
+<pre><code>#!/usr/bin/env bash
+set -euo pipefail</code></pre>
+
+<h2>Parsear texto con <code>for</code></h2>
+<p>Usar <code>for archivo in $(comando)</code> no es una forma segura de recorrer nombres que contienen espacios o caracteres especiales. Para archivos, es mejor apoyarse en mecanismos que preserven los nombres correctamente.</p>
+<pre><code>find ./datos -type f -print0 |
+  while IFS= read -r -d '' archivo; do
+    printf 'Archivo: %s\n' "$archivo"
+  done</code></pre>
+
+<h2>Escribir un one-liner imposible de leer</h2>
+<p>Un comando compacto puede ser divertido, pero si otra persona no puede entenderlo, será difícil mantenerlo. Usa nombres claros, separa etapas y comenta las decisiones no obvias.</p>
+
+<h2>No probar antes de automatizar</h2>
+<p>Antes de ejecutar un script sobre información real:</p>
+<ul><li>Prueba con una copia de los datos.</li><li>Incluye una opción de simulación cuando el script haga cambios.</li><li>Registra los errores y el resultado de cada etapa importante.</li><li>Verifica rutas, permisos y dependencias.</li></ul>
+
+<h2>La regla que me salva más tiempo</h2>
+<p>Si un comando modifica o elimina archivos, primero haz que explique qué va a modificar. Cuando puedas revisar esa lista y te parezca correcta, recién entonces habilita la operación real.</p>
+<p class="closing">Los scripts no necesitan ser ingeniosos: necesitan ser predecibles. El mejor atajo es el que entiendes cuando vuelves a leerlo meses después.</p>
+</main>
+
+<footer><p><a href="index.html">&lt; volver a la bitácora</a> · Sin rastreo, sin cookies.</p><p>© 2026 A GHOST ·</p></footer>
+</div>
+<button id="toggle-matrix" aria-pressed="true">matrix: on</button>
+<script>
+(function(){"use strict";var reduce=matchMedia("(prefers-reduced-motion: reduce)").matches,c=document.getElementById("matrix"),x=c.getContext("2d"),f=16,n=0,g=[],on=!reduce,timer=null,chars="01ｱｲｳｴｵｶｷｸ<>/\\{}[]$#@%&*+=-_.:;|".split("");function size(){c.width=innerWidth;c.height=innerHeight;n=Math.floor(c.width/f);g=new Array(n).fill(0).map(function(){return Math.random()*-80})}function draw(){if(!on)return;x.fillStyle="rgba(0,0,0,.09)";x.fillRect(0,0,c.width,c.height);x.font=f+"px monospace";for(var i=0;i<n;i++){var y=g[i]*f;x.fillStyle=Math.random()>.97?"#b6ffab":"#39ff14";x.fillText(chars[Math.floor(Math.random()*chars.length)],i*f,y);if(y>c.height&&Math.random()>.975)g[i]=0;g[i]++}}size();addEventListener("resize",size);if(!reduce)timer=setInterval(draw,62);document.getElementById("toggle-matrix").onclick=function(e){on=!on;e.currentTarget.textContent="matrix: "+(on?"on":"off");e.currentTarget.setAttribute("aria-pressed",String(on));if(on){x.clearRect(0,0,c.width,c.height);if(!timer)timer=setInterval(draw,62)}else if(timer){clearInterval(timer);timer=null}};function clock(){var d=new Date();document.getElementById("reloj").textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(v){return String(v).padStart(2,"0")}).join(":")}clock();setInterval(clock,1000)})();
+</script>
+</body>
+</html>

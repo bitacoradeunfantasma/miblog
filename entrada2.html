@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resucitar un ThinkPad del 2009 | Bitácora de un fantasma</title>
+<meta name="description" content="Convertir un ThinkPad antiguo en una terminal Linux para el uso diario.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--verde:#39ff14;--verde-dim:#1f8f10;--verde-tenue:rgba(57,255,20,.28);--negro:#000;--glow:0 0 4px rgba(57,255,20,.75),0 0 14px rgba(57,255,20,.28);--mono:'Share Tech Mono','Courier New',monospace}
+*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;background:var(--negro);color:var(--verde);font-family:var(--mono);font-size:16px;line-height:1.7;letter-spacing:.4px;text-shadow:0 0 2px rgba(57,255,20,.35);overflow-x:hidden}
+#matrix{position:fixed;inset:0;z-index:0;opacity:.08;pointer-events:none}.crt{position:fixed;inset:0;z-index:900;pointer-events:none}.crt::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 2px,rgba(0,0,0,.45) 3px,rgba(0,0,0,.45) 4px)}.crt::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85) 100%)}
+.contenedor{position:relative;z-index:10;width:min(860px,92vw);margin:0 auto}
+.barra-estado{position:relative;z-index:20;display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:space-between;padding:8px 4vw;border-bottom:1px solid var(--verde-tenue);background:rgba(0,0,0,.88);color:var(--verde-dim);font-size:.72rem;text-transform:uppercase;text-shadow:none}.barra-estado span{white-space:nowrap}.barra-estado b{color:var(--verde);font-weight:400}
+.led{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:var(--verde);box-shadow:0 0 8px var(--verde);animation:parpadear 1.6s infinite}@keyframes parpadear{50%{opacity:.15}}
+header{padding:42px 0 24px;border-bottom:1px dashed var(--verde-tenue)}.prompt{margin:0 0 22px;color:var(--verde-dim);font-size:.85rem;text-shadow:none}.prompt b{color:var(--verde);font-weight:400}
+.volver{display:inline-block;margin-bottom:28px;color:var(--verde);font-size:.78rem;text-decoration:none;text-transform:uppercase;border-bottom:1px solid var(--verde-dim)}.volver:hover{border-color:var(--verde);text-shadow:var(--glow)}
+.etiqueta{margin:0 0 10px;color:var(--verde-dim);font-size:.75rem;letter-spacing:1.5px;text-transform:uppercase;text-shadow:none}
+h1{margin:0;max-width:22ch;font-size:clamp(2rem,7vw,3.8rem);font-weight:400;line-height:1.08;text-transform:uppercase;text-shadow:var(--glow)}
+.bajada{max-width:65ch;margin:18px 0 0;color:var(--verde-dim);text-shadow:none}
+.meta{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:22px;color:var(--verde-dim);font-size:.7rem;text-transform:uppercase;letter-spacing:1.2px;text-shadow:none}
+nav{display:flex;flex-wrap:wrap;gap:10px;padding:16px 0;border-bottom:1px solid var(--verde-tenue)}nav a{padding:6px 12px;border:1px solid var(--verde-tenue);background:rgba(57,255,20,.04);color:var(--verde);font-size:.8rem;text-decoration:none;text-transform:uppercase}nav a:hover{background:var(--verde);color:#000}
+main{padding:34px 0 58px}.aviso{margin:0 0 30px;padding:14px 16px;border-left:3px solid var(--verde);background:rgba(57,255,20,.045);color:var(--verde-dim);font-size:.9rem}.aviso strong{color:var(--verde);font-weight:400}
+.contenido h2{margin:38px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--verde-tenue);font-size:1.25rem;font-weight:400;letter-spacing:1px;text-transform:uppercase}.contenido p,.contenido li{color:#9fca98;font-size:.95rem}.contenido ul,.contenido ol{padding-left:24px}.contenido li{margin:7px 0}.contenido code,pre{font-family:var(--mono)}.contenido code{padding:2px 6px;border:1px solid var(--verde-tenue);background:rgba(57,255,20,.06);color:var(--verde);font-size:.88em}pre{overflow-x:auto;margin:16px 0 22px;padding:16px;border:1px solid var(--verde-tenue);background:rgba(57,255,20,.035);color:var(--verde);font-size:.84rem;line-height:1.6;text-shadow:none}.cierre{margin-top:38px;padding-top:20px;border-top:1px dashed var(--verde-tenue);color:var(--verde-dim)!important;font-size:.86rem!important}
+footer{padding:24px 0 42px;border-top:1px dashed var(--verde-tenue);color:var(--verde-dim);font-size:.76rem;text-shadow:none}footer a{color:var(--verde);text-decoration:none}
+#toggle-matrix{position:fixed;right:16px;bottom:16px;z-index:950;padding:8px 12px;border:1px solid var(--verde-tenue);background:#000;color:var(--verde);font-family:var(--mono);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer}
+@media(max-width:600px){.barra-estado{font-size:.62rem;gap:4px 14px}.contenido p,.contenido li{font-size:.9rem}pre{font-size:.76rem}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas><div class="crt" aria-hidden="true"></div>
+<div class="barra-estado"><span><span class="led"></span>ESTADO: <b>EN LÍNEA</b></span><span>NODO: <b>127.0.0.1</b></span><span>REL: <b id="reloj">--:--:--</b></span></div>
+
+<div class="contenedor">
+<header>
+  <p class="prompt">root@localhost:<b>~/posts</b>$ cat thinkpad-retro.md</p>
+  <a class="volver" href="index.html">&lt; volver_a_entradas</a>
+  <p class="etiqueta">// hardware · linux</p>
+  <h1>Resucitar un ThinkPad del 2009 como terminal diaria</h1>
+  <p class="bajada">Una batería muerta, memoria limitada y un teclado excelente. ¿Todavía puede servir un portátil de otra época?</p>
+  <div class="meta"><span>2026-11-14</span><span>5 min de lectura</span><span>por 0xBLOG</span></div>
+</header>
+
+<nav aria-label="Navegación"><a href="index.html">/inicio</a><a href="index.html#posts">/archivo</a><a href="index.html#contacto">/contacto</a></nav>
+
+<main class="contenido">
+<aside class="aviso"><strong>[nota]</strong> Antes de instalar un sistema operativo, revisa el estado del disco y haz una copia de los archivos que quieras conservar.</aside>
+
+<p>Los portátiles viejos suelen terminar olvidados en un cajón. El mío tenía una batería que ya no retenía carga y apenas 2 GB de RAM, pero también tenía un teclado cómodo, puertos útiles y una carcasa que había sobrevivido a más de una mudanza.</p>
+
+<h2>Primero: revisar el hardware</h2>
+<p>Antes de cambiar el software, conviene comprobar que el equipo no tenga fallos físicos. Revisa el disco, la memoria, el ventilador y el estado de la batería. Si el disco está fallando, instalar un sistema nuevo no lo va a reparar.</p>
+<pre><code>sudo smartctl -a /dev/sda
+free -h
+df -h</code></pre>
+
+<h2>Elegir un sistema ligero</h2>
+<p>Para un equipo con recursos limitados, una distribución ligera puede ofrecer una experiencia más fluida que un entorno de escritorio pesado. La elección depende de cuánto quieras configurar y qué programas necesitas usar.</p>
+<p>Mi prioridad era tener un navegador, un editor de texto, una terminal y acceso a mis archivos. No necesitaba animaciones ni aplicaciones cargándose en segundo plano.</p>
+
+<h2>Reducir lo que se ejecuta</h2>
+<p>Una instalación mínima ayuda a conservar memoria y simplifica el mantenimiento. Desactiva solo los servicios que hayas identificado y que sepas que no necesitas; no elimines componentes a ciegas.</p>
+<pre><code>systemctl --type=service --state=running</code></pre>
+
+<h2>¿Y la batería?</h2>
+<p>Una batería agotada no siempre impide usar el portátil, pero sí limita dónde puedes trabajar. Si vas a comprar un reemplazo, revisa el modelo exacto y considera el estado y la procedencia de la batería.</p>
+
+<h2>Un portátil con otra vida</h2>
+<p>El mayor cambio no fue que el equipo se volviera rápido, sino que dejó de tener que competir con máquinas nuevas. Ahora tiene una tarea concreta: escribir, conectarse por SSH y mantener a mano documentación técnica.</p>
+
+<h2>Lo que aprendí</h2>
+<ul><li>Identifica el uso que le darás antes de instalar software.</li><li>Comprueba el estado del hardware primero.</li><li>Un sistema sencillo suele ser más fácil de mantener.</li><li>No hace falta que un equipo antiguo haga todo: puede hacer bien una sola cosa.</li></ul>
+
+<p class="cierre">No resucitó para competir con un portátil nuevo. Resucitó para seguir siendo útil, que es una forma bastante digna de durar.</p>
+</main>
+
+<footer><p><a href="index.html">&lt; volver a la bitácora</a> · Sin rastreo, sin cookies.</p><p>© 2026 A GHOST ·</p></footer>
+</div>
+
+<button id="toggle-matrix" aria-pressed="true">matrix: on</button>
+<script>
+(function(){
+"use strict";
+var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var canvas=document.getElementById("matrix"),ctx=canvas.getContext("2d"),fuente=16,columnas=0,gotas=[],activo=!reduce,intervalo=null;
+var glifos="01ｱｲｳｴｵｶｷｸ<>/\\{}[]$#@%&*+=-_.:;|".split("");
+function medir(){canvas.width=innerWidth;canvas.height=innerHeight;columnas=Math.floor(canvas.width/fuente);gotas=new Array(columnas).fill(0).map(function(){return Math.random()*-80})}
+function dibujar(){if(!activo)return;ctx.fillStyle="rgba(0,0,0,.09)";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font=fuente+"px monospace";for(var i=0;i<columnas;i++){var y=gotas[i]*fuente;ctx.fillStyle=Math.random()>.97?"#b6ffab":"#39ff14";ctx.fillText(glifos[Math.floor(Math.random()*glifos.length)],i*fuente,y);if(y>canvas.height&&Math.random()>.975)gotas[i]=0;gotas[i]++}}
+medir();addEventListener("resize",medir);if(!reduce)intervalo=setInterval(dibujar,62);
+document.getElementById("toggle-matrix").addEventListener("click",function(e){activo=!activo;e.currentTarget.textContent="matrix: "+(activo?"on":"off");e.currentTarget.setAttribute("aria-pressed",String(activo));if(activo){ctx.clearRect(0,0,canvas.width,canvas.height);if(!intervalo)intervalo=setInterval(dibujar,62)}else if(intervalo){clearInterval(intervalo);intervalo=null}});
+function reloj(){var d=new Date();document.getElementById("reloj").textContent=[d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return String(n).padStart(2,"0")}).join(":")}
+reloj();setInterval(reloj,1000);
+})();
+</script>
+</body>
+</html>

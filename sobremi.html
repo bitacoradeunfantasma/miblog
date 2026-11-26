@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre mí | Bitácora de un fantasma</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --verde: #39ff14;
+      --verde-dim: #1f8f10;
+      --verde-tenue: rgba(57, 255, 20, .28);
+      --negro: #000;
+      --mono: 'Share Tech Mono', 'Courier New', monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--negro);
+      color: var(--verde);
+      font-family: var(--mono);
+      line-height: 1.7;
+      text-shadow: 0 0 2px rgba(57, 255, 20, .35);
+    }
+
+    .barra-estado {
+      padding: 8px 18px;
+      border-bottom: 1px solid var(--verde-tenue);
+      color: var(--verde-dim);
+      font-size: .75rem;
+      text-transform: uppercase;
+    }
+
+    .contenedor {
+      width: min(800px, 90vw);
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 48px 0 28px;
+      border-bottom: 1px dashed var(--verde-tenue);
+    }
+
+    .prompt {
+      color: var(--verde-dim);
+      font-size: .85rem;
+    }
+
+    h1 {
+      margin: 12px 0;
+      font-size: clamp(2rem, 8vw, 4rem);
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-shadow: 0 0 4px rgba(57,255,20,.75), 0 0 14px rgba(57,255,20,.28);
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--verde-tenue);
+    }
+
+    nav a, .boton {
+      display: inline-block;
+      padding: 6px 12px;
+      border: 1px solid var(--verde-tenue);
+      background: rgba(57,255,20,.04);
+      color: var(--verde);
+      font-size: .8rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: .16s;
+    }
+
+    nav a:hover, .boton:hover {
+      background: var(--verde);
+      color: var(--negro);
+      text-shadow: none;
+    }
+
+    main { padding: 36px 0 60px; }
+
+    .etiqueta {
+      color: var(--verde-dim);
+      font-size: .8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .tarjeta {
+      margin-top: 20px;
+      padding: 24px;
+      border: 1px solid var(--verde-tenue);
+      background: linear-gradient(180deg, rgba(57,255,20,.05), rgba(0,0,0,.6));
+    }
+
+    .tarjeta h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+    }
+
+    .tarjeta p { color: var(--verde-dim); }
+
+    footer {
+      padding: 24px 0;
+      border-top: 1px dashed var(--verde-tenue);
+      color: var(--verde-dim);
+      font-size: .8rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="barra-estado">ESTADO: <strong>EN LÍNEA</strong> · SECCIÓN: SOBRE MÍ</div>
+
+  <div class="contenedor">
+    <header>
+      <p class="prompt">root@localhost:~$ cat sobre-mi.txt</p>
+      <h1>Sobre mí</h1>
+    </header>
+
+    <main>
+      <p class="etiqueta">// quién está detrás de la pantalla</p>
+
+      <section class="tarjeta">
+        <h2>&gt; Mejor conocido como AGHOST</h2>
+
+        <p>
+          Soy una persona interesada en la tecnología, el código y las historias
+          que se esconden detrás de cada sistema.
+        </p>
+
+        <p>
+          En esta bitácora comparto ideas, aprendizajes y proyectos sobre
+          programación, seguridad, hardware, ethical hacking, hacking (whit, grey, black), y muchas herramientas tanto para el uso diario como para cosas mas alla de la vista de todos.
+        </p>
+
+        <p>
+          Cuando no estoy frente a una terminal, probablemente estoy pensando que hacer, crear, modificar o mejorar de lo antes hecho.
+        </p>
+      </section>
+
+      <p style="margin-top:28px">
+        <a class="boton" href="index.html">← Volver al inicio</a>
+      </p>
+    </main>
+
+    <footer>© 2026 A GHOST · Sin rastreo, sin cookies.</footer>
+  </div>
+</body>
+</html>

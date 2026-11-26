@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Endurecer un servidor en 12 pasos | Bitácora de un fantasma</title>
+<meta name="description" content="Una guía práctica para endurecer un servidor Linux más allá de instalar un firewall.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --verde:#39ff14;
+    --verde-dim:#1f8f10;
+    --verde-tenue:rgba(57,255,20,.28);
+    --negro:#000;
+    --glow:0 0 4px rgba(57,255,20,.75), 0 0 14px rgba(57,255,20,.28);
+    --mono:'Share Tech Mono','Courier New',ui-monospace,monospace;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--negro);
+    color:var(--verde);
+    font-family:var(--mono);
+    font-size:16px;
+    line-height:1.7;
+    letter-spacing:.4px;
+    text-shadow:0 0 2px rgba(57,255,20,.35);
+    overflow-x:hidden;
+  }
+
+  #matrix{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    opacity:.08;
+    pointer-events:none;
+  }
+
+  .crt{
+    position:fixed;
+    inset:0;
+    z-index:900;
+    pointer-events:none;
+  }
+
+  .crt::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 2px,
+      rgba(0,0,0,.45) 3px,
+      rgba(0,0,0,.45) 4px
+    );
+  }
+
+  .crt::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(
+      ellipse at center,
+      transparent 45%,
+      rgba(0,0,0,.85) 100%
+    );
+  }
+
+  .contenedor{
+    position:relative;
+    z-index:10;
+    width:min(860px,92vw);
+    margin:0 auto;
+  }
+
+  .barra-estado{
+    position:relative;
+    z-index:20;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 22px;
+    justify-content:space-between;
+    padding:8px 4vw;
+    border-bottom:1px solid var(--verde-tenue);
+    background:rgba(0,0,0,.88);
+    color:var(--verde-dim);
+    font-size:.72rem;
+    text-transform:uppercase;
+    text-shadow:none;
+  }
+
+  .barra-estado span{white-space:nowrap}
+  .barra-estado b{color:var(--verde);font-weight:400}
+
+  .led{
+    display:inline-block;
+    width:8px;
+    height:8px;
+    margin-right:6px;
+    border-radius:50%;
+    background:var(--verde);
+    box-shadow:0 0 8px var(--verde);
+    animation:parpadear 1.6s infinite;
+  }
+
+  @keyframes parpadear{50%{opacity:.15}}
+
+  header.cabecera{
+    padding:42px 0 24px;
+    border-bottom:1px dashed var(--verde-tenue);
+  }
+
+  .prompt{
+    margin:0 0 22px;
+    color:var(--verde-dim);
+    font-size:.85rem;
+    text-shadow:none;
+  }
+
+  .prompt b{color:var(--verde);font-weight:400}
+
+  .volver{
+    display:inline-block;
+    margin-bottom:28px;
+    color:var(--verde);
+    font-size:.78rem;
+    text-decoration:none;
+    text-transform:uppercase;
+    border-bottom:1px solid var(--verde-dim);
+  }
+
+  .volver:hover{
+    border-color:var(--verde);
+    text-shadow:var(--glow);
+  }
+
+  .etiqueta{
+    margin:0 0 10px;
+    color:var(--verde-dim);
+    font-size:.75rem;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    text-shadow:none;
+  }
+
+  h1{
+    margin:0;
+    max-width:22ch;
+    font-size:clamp(2rem,7vw,3.8rem);
+    font-weight:400;
+    line-height:1.08;
+    text-transform:uppercase;
+    text-shadow:var(--glow);
+  }
+
+  .bajada{
+    max-width:65ch;
+    margin:18px 0 0;
+    color:var(--verde-dim);
+    text-shadow:none;
+  }
+
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 18px;
+    margin-top:22px;
+    color:var(--verde-dim);
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+    text-shadow:none;
+  }
+
+  nav.menu{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:16px 0;
+    border-bottom:1px solid var(--verde-tenue);
+  }
+
+  nav.menu a{
+    padding:6px 12px;
+    border:1px solid var(--verde-tenue);
+    background:rgba(57,255,20,.04);
+    color:var(--verde);
+    font-size:.8rem;
+    text-decoration:none;
+    text-transform:uppercase;
+    transition:.16s;
+  }
+
+  nav.menu a:hover,
+  nav.menu a:focus-visible{
+    background:var(--verde);
+    color:var(--negro);
+    outline:none;
+  }
+
+  main{
+    padding:34px 0 58px;
+  }
+
+  .aviso{
+    margin:0 0 30px;
+    padding:14px 16px;
+    border-left:3px solid var(--verde);
+    background:rgba(57,255,20,.045);
+    color:var(--verde-dim);
+    font-size:.9rem;
+  }
+
+  .aviso strong{color:var(--verde);font-weight:400}
+
+  .contenido h2{
+    margin:38px 0 12px;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--verde-tenue);
+    font-size:1.25rem;
+    font-weight:400;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  .contenido h3{
+    margin:26px 0 8px;
+    font-size:1rem;
+    font-weight:400;
+    color:var(--verde);
+  }
+
+  .contenido p,
+  .contenido li{
+    color:#9fca98;
+    font-size:.95rem;
+  }
+
+  .contenido a{
+    color:var(--verde);
+    text-underline-offset:4px;
+  }
+
+  .contenido ul,
+  .contenido ol{
+    padding-left:24px;
+  }
+
+  .contenido li{padding-left:4px;margin:7px 0}
+
+  .contenido code{
+    padding:2px 6px;
+    border:1px solid var(--verde-tenue);
+    background:rgba(57,255,20,.06);
+    color:var(--verde);
+    font-family:var(--mono);
+    font-size:.88em;
+  }
+
+  pre.codigo{
+    overflow-x:auto;
+    margin:16px 0 22px;
+    padding:16px;
+    border:1px solid var(--verde-tenue);
+    background:rgba(57,255,20,.035);
+    color:var(--verde);
+    font-family:var(--mono);
+    font-size:.84rem;
+    line-height:1.6;
+    text-shadow:none;
+  }
+
+  .cierre{
+    margin-top:38px;
+    padding-top:20px;
+    border-top:1px dashed var(--verde-tenue);
+    color:var(--verde-dim);
+    font-size:.86rem;
+  }
+
+  footer.pie{
+    padding:24px 0 42px;
+    border-top:1px dashed var(--verde-tenue);
+    color:var(--verde-dim);
+    font-size:.76rem;
+    text-shadow:none;
+  }
+
+  footer.pie a{color:var(--verde);text-decoration:none}
+  footer.pie a:hover{text-decoration:underline}
+
+  #toggle-matrix{
+    position:fixed;
+    right:16px;
+    bottom:16px;
+    z-index:950;
+    padding:8px 12px;
+    border:1px solid var(--verde-tenue);
+    background:#000;
+    color:var(--verde);
+    font-family:var(--mono);
+    font-size:.68rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+
+  #toggle-matrix:hover{
+    background:var(--verde);
+    color:#000;
+  }
+
+  @media(max-width:600px){
+    .barra-estado{font-size:.62rem;gap:4px 14px}
+    .contenido p,.contenido li{font-size:.9rem}
+    pre.codigo{font-size:.76rem}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="crt" aria-hidden="true"></div>
+
+<div class="barra-estado">
+  <span><span class="led"></span>ESTADO: <b>EN LÍNEA</b></span>
+  <span>NODO: <b>127.0.0.1</b></span>
+  <span>REL: <b id="reloj">--:--:--</b></span>
+</div>
+
+<div class="contenedor">
+  <header class="cabecera">
+    <p class="prompt">root@localhost:<b>~/posts</b>$ cat endurecer-servidor.md</p>
+
+    <a class="volver" href="index.html">&lt; volver_a_entradas</a>
+
+    <p class="etiqueta">// seguridad · guía práctica</p>
+    <h1>Endurecer un servidor en 12 pasos</h1>
+
+    <p class="bajada">
+      El hardening real empieza donde terminan los tutoriales rápidos.
+      Antes de instalar más herramientas, conviene cerrar lo que no necesitas
+      y entender qué está expuesto.
+    </p>
+
+    <div class="meta">
+      <span>2026-11-20</span>
+      <span>7 min de lectura</span>
+      <span>por 0xBLOG</span>
+    </div>
+  </header>
+
+  <nav class="menu" aria-label="Navegación principal">
+    <a href="index.html">/inicio</a>
+    <a href="index.html#posts">/archivo</a>
+    <a href="index.html#contacto">/contacto</a>
+  </nav>
+
+  <main class="contenido">
+    <aside class="aviso">
+      <strong>[nota]</strong> Los comandos son ejemplos para sistemas Linux basados en Debian.
+      Adáptalos a tu distribución y conserva una sesión abierta mientras cambias la configuración
+      de SSH, para evitar bloquearte fuera del servidor.
+    </aside>
+
+    <p>
+      Un servidor expuesto a internet recibe intentos de acceso constantemente.
+      No hace falta entrar en pánico, pero sí reducir la superficie de ataque:
+      quitar servicios innecesarios, proteger las cuentas y mantener el sistema actualizado.
+    </p>
+
+    <h2>01. Actualiza el sistema</h2>
+    <p>
+      Empieza instalando las actualizaciones disponibles. Un sistema viejo puede
+      conservar vulnerabilidades conocidas que ya tienen solución.
+    </p>
+    <pre class="codigo"><code>sudo apt update
+sudo apt upgrade</code></pre>
+
+    <h2>02. Crea un usuario administrativo</h2>
+    <p>
+      Evita usar la cuenta <code>root</code> para las tareas cotidianas. Crea una
+      cuenta personal y dale permisos administrativos cuando realmente los necesite.
+    </p>
+    <pre class="codigo"><code>sudo adduser operador
+sudo usermod -aG sudo operador</code></pre>
+
+    <h2>03. Protege el acceso SSH</h2>
+    <p>
+      Usa claves SSH y desactiva el acceso directo de <code>root</code>. Antes de
+      aplicar cambios, comprueba que puedes entrar con la nueva cuenta y la clave.
+    </p>
+    <p>
+      Edita <code>/etc/ssh/sshd_config</code> y revisa, según tu configuración,
+      opciones como estas:
+    </p>
+    <pre class="codigo"><code>PermitRootLogin no
+PubkeyAuthentication yes
+PasswordAuthentication no</code></pre>
+    <p>
+      Después de guardar, valida la configuración y recarga el servicio SSH.
+      El nombre del servicio puede variar según la distribución.
+    </p>
+
+    <h2>04. Cierra los puertos que no utilizas</h2>
+    <p>
+      Revisa qué servicios están escuchando. Si no reconoces uno, averigua qué
+      proceso lo abrió antes de detenerlo.
+    </p>
+    <pre class="codigo"><code>sudo ss -tulpn</code></pre>
+
+    <h2>05. Configura un firewall</h2>
+    <p>
+      Permite únicamente el tráfico que necesitas. Si administras el servidor por
+      SSH, autoriza ese acceso antes de activar las reglas para no perder la conexión.
+    </p>
+    <pre class="codigo"><code>sudo ufw allow OpenSSH
+sudo ufw enable
+sudo ufw status verbose</code></pre>
+
+    <h2>06. Usa contraseñas únicas y autenticación adicional</h2>
+    <p>
+      No reutilices contraseñas entre servicios. Para cuentas importantes, utiliza
+      un gestor de contraseñas y activa autenticación multifactor cuando esté disponible.
+    </p>
+
+    <h2>07. Reduce los servicios activos</h2>
+    <p>
+      Cada servicio instalado y olvidado puede convertirse en una puerta que no
+      sabías que seguía abierta. Desinstala lo que no necesitas y revisa qué se inicia
+      automáticamente.
+    </p>
+    <pre class="codigo"><code>systemctl --type=service --state=running</code></pre>
+
+    <h2>08. Revisa permisos y archivos sensibles</h2>
+    <p>
+      Las claves, archivos de configuración y copias de seguridad no deberían ser
+      legibles por cualquier usuario local. Comprueba permisos y propietarios, sin
+      aplicar cambios masivos a ciegas.
+    </p>
+
+    <h2>09. Instala solo software de fuentes confiables</h2>
+    <p>
+      Prefiere los repositorios oficiales o proyectos cuya procedencia puedas
+      verificar. Evita copiar comandos de instalación sin entender qué descargan
+      y qué permisos solicitan.
+    </p>
+
+    <h2>10. Prepara copias de seguridad</h2>
+    <p>
+      Una copia que nunca se ha restaurado es solo una suposición. Automatiza los
+      respaldos y prueba periódicamente que puedes recuperar los datos.
+    </p>
+
+    <h2>11. Configura registros y alertas</h2>
+    <p>
+      Los registros ayudan a investigar errores y accesos sospechosos. Define qué
+      revisar, cuánto tiempo conservar los datos y cómo recibir alertas ante eventos
+      importantes.
+    </p>
+
+    <h2>12. Documenta los cambios</h2>
+    <p>
+      Anota qué cambiaste, cuándo y por qué. Esa bitácora será más útil que intentar
+      reconstruir meses después qué servicio dejó de funcionar y quién tocó la
+      configuración.
+    </p>
+
+    <h2>Antes de cerrar la sesión</h2>
+    <ul>
+      <li>Confirma que puedes iniciar sesión con la cuenta administrativa.</li>
+      <li>Verifica que el acceso SSH sigue funcionando en una segunda terminal.</li>
+      <li>Comprueba las reglas del firewall y los puertos expuestos.</li>
+      <li>Asegúrate de tener una copia de seguridad reciente y recuperable.</li>
+    </ul>
+
+    <p class="cierre">
+      El objetivo no es convertir el servidor en algo imposible de atacar.
+      Es reducir riesgos, detectar problemas antes y evitar dejar abierta una puerta
+      por simple descuido.
+    </p>
+  </main>
+
+  <footer class="pie" id="contacto">
+    <p>
+      <a href="index.html">&lt; volver a la bitácora</a>
+      · Sin rastreo, sin cookies.
+    </p>
+    <p>© 2026 A GHOST ·</p>
+  </footer>
+</div>
+
+<button id="toggle-matrix" aria-pressed="true">matrix: on</button>
+
+<script>
+(function(){
+  "use strict";
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canvas = document.getElementById("matrix");
+  var ctx = canvas.getContext("2d");
+  var fuente = 16;
+  var columnas = 0;
+  var gotas = [];
+  var activo = !reduce;
+  var intervalo = null;
+  var glifos = "01ｱｲｳｴｵｶｷｸ<>/\\{}[]$#@%&*+=-_.:;|".split("");
+
+  function medir(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    columnas = Math.floor(canvas.width / fuente);
+    gotas = new Array(columnas).fill(0).map(function(){
+      return Math.random() * -80;
+    });
+  }
+
+  function dibujar(){
+    if(!activo) return;
+
+    ctx.fillStyle = "rgba(0,0,0,.09)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font = fuente + "px monospace";
+
+    for(var i = 0; i < columnas; i++){
+      var texto = glifos[Math.floor(Math.random() * glifos.length)];
+      var y = gotas[i] * fuente;
+      ctx.fillStyle = Math.random() > .97 ? "#b6ffab" : "#39ff14";
+      ctx.fillText(texto,i * fuente,y);
+
+      if(y > canvas.height && Math.random() > .975) gotas[i] = 0;
+      gotas[i]++;
+    }
+  }
+
+  medir();
+  window.addEventListener("resize",medir);
+
+  if(!reduce){
+    intervalo = setInterval(dibujar,62);
+  }
+
+  document.getElementById("toggle-matrix").addEventListener("click",function(e){
+    activo = !activo;
+    e.currentTarget.textContent = "matrix: " + (activo ? "on" : "off");
+    e.currentTarget.setAttribute("aria-pressed",String(activo));
+
+    if(activo){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      if(!intervalo) intervalo = setInterval(dibujar,62);
+    }else if(intervalo){
+      clearInterval(intervalo);
+      intervalo = null;
+    }
+  });
+
+  function actualizarReloj(){
+    var ahora = new Date();
+    document.getElementById("reloj").textContent =
+      String(ahora.getHours()).padStart(2,"0") + ":" +
+      String(ahora.getMinutes()).padStart(2,"0") + ":" +
+      String(ahora.getSeconds()).padStart(2,"0");
+  }
+
+  actualizarReloj();
+  setInterval(actualizarReloj,1000);
+})();
+</script>
+</body>
+</html>
